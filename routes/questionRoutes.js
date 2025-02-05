@@ -2,44 +2,35 @@ const express = require("express");
 const router = express.Router();
 const Question = require("../models/Question");
 
-// Create a question
-router.post("/", async (req, res) => {
-    try {
-        const newQuestion = new Question(req.body);
-        await newQuestion.save();
-        res.status(201).json(newQuestion);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-// Get all questions
+// @desc Get all questions
 router.get("/", async (req, res) => {
     try {
         const questions = await Question.find();
         res.json(questions);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ message: err.message });
     }
 });
 
-// Update a question
-router.put("/:id", async (req, res) => {
+// @desc Add a new question
+router.post("/", async (req, res) => {
+    const { category, question, answer, points } = req.body;
     try {
-        const updatedQuestion = await Question.findByIdAndUpdate(req.params.id, req.body, { new: true });
-        res.json(updatedQuestion);
+        const newQuestion = new Question({ category, question, answer, points });
+        await newQuestion.save();
+        res.status(201).json(newQuestion);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(400).json({ message: err.message });
     }
 });
 
-// Delete a question
+// @desc Delete a question
 router.delete("/:id", async (req, res) => {
     try {
         await Question.findByIdAndDelete(req.params.id);
         res.json({ message: "Question deleted" });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        res.status(500).json({ message: err.message });
     }
 });
 

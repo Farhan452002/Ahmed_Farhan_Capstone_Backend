@@ -1,58 +1,26 @@
 require("dotenv").config();
 const mongoose = require("mongoose");
-const Question = require("./models/Question");
+const Question = require("../models/Question");
+const connectDB = require("../config/db");
 
-// Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
-.then(() => console.log("MongoDB Connected"))
-.catch(err => console.error("MongoDB connection error:", err));
-
-// Default questions
 const seedQuestions = [
-    {
-        category: "Science",
-        question: "What planet is known as the Red Planet?",
-        answer: "Mars",
-        points: 100
-    },
-    {
-        category: "History",
-        question: "Who was the first president of the United States?",
-        answer: "George Washington",
-        points: 200
-    },
-    {
-        category: "Math",
-        question: "What is the square root of 64?",
-        answer: "8",
-        points: 300
-    },
-    {
-        category: "Geography",
-        question: "What is the capital of France?",
-        answer: "Paris",
-        points: 400
-    },
-    {
-        category: "Technology",
-        question: "What does CPU stand for?",
-        answer: "Central Processing Unit",
-        points: 500
-    }
+    { category: "History", question: "Who was the first president of the USA?", answer: "George Washington", points: 100 },
+    { category: "Science", question: "What planet is known as the Red Planet?", answer: "Mars", points: 200 },
+    { category: "Geography", question: "What is the capital of France?", answer: "Paris", points: 300 },
+    { category: "Sports", question: "How many players are on a soccer team?", answer: "11", points: 400 },
+    { category: "Movies", question: "Who directed 'Titanic'?", answer: "James Cameron", points: 500 }
 ];
 
-// Insert default questions
 const seedDB = async () => {
     try {
-        await Question.deleteMany(); // Clears the collection before adding new data
+        await connectDB();
+        await Question.deleteMany();
         await Question.insertMany(seedQuestions);
-        console.log("Seed data inserted!");
-        mongoose.connection.close(); // Close connection after seeding
-    } catch (err) {
-        console.error("Seeding error:", err);
+        console.log("Database seeded successfully");
+        process.exit();
+    } catch (error) {
+        console.error("Seeding error:", error);
+        process.exit(1);
     }
 };
 
