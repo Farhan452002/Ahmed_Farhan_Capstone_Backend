@@ -34,4 +34,23 @@ router.delete("/:id", async (req, res) => {
     }
 });
 
+router.put("/:id", async (req, res) => {
+    try {
+        const updatedQuestion = await Question.findByIdAndUpdate(
+            req.params.id, // Get the ID from the URL
+            req.body,      // Update with request body
+            { new: true }  // Return the updated document
+        );
+
+        if (!updatedQuestion) {
+            return res.status(404).json({ message: "Question not found" });
+        }
+
+        res.json(updatedQuestion);
+    } catch (error) {
+        res.status(500).json({ message: "Server error", error: error.message });
+    }
+});
+
+
 module.exports = router;
